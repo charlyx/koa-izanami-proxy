@@ -1,0 +1,28 @@
+{
+  "name": "koa-izanami-proxy",
+  "version": "1.0.0",
+  "description": "Izanami proxy for Koa",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/charlyx/koa-izanami-proxy.git"
+  },
+  "keywords": [
+    "node",
+    "proxy",
+    "izanami",
+    "koa"
+  ],
+  "author": "Charles-Henri GUERIN",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/charlyx/koa-izanami-proxy/issues"
+  },
+  "homepage": "https://github.com/charlyx/koa-izanami-proxy#readme",
+  "devDependencies": {
+    "jest": "^24.5.0"
+  }
+}

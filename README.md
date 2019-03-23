@@ -1,2 +1,3 @@
 # koa-izanami-proxy
-Proxy for Izanami using Koa
+
+[Izanami](https://maif.github.io/izanami/) proxy for [Koa](https://koajs.com/)
