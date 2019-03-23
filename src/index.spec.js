@@ -11,9 +11,7 @@ describe('Izanami proxy', () => {
   afterEach(() => proxy && proxy.close())
 
   it('should throw an error if no app specified', () => {
-    expect(() => {
-      izanamiProxy()
-    }).toThrow('No app given. Please specify app property in your proxy configuration')
+    expect(izanamiProxy).toThrow('No app given. Please specify app property in your proxy configuration')
   })
 
   it('should answer at /api/izanami by default', async () => {
