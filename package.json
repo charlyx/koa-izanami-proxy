@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/charlyx/koa-izanami-proxy#readme",
   "devDependencies": {
+    "coveralls": "^3.0.3",
     "jest": "^24.5.0",
     "koa": "^2.7.0",
     "supertest": "^4.0.2"
