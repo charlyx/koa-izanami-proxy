@@ -8,6 +8,8 @@ const { objectContaining } = expect
 describe('Izanami proxy', () => {
   let proxy
 
+  beforeEach(jest.clearAllMocks)
+
   afterEach(() => proxy && proxy.close())
 
   it('should throw an error if no app specified', () => {
@@ -47,8 +49,6 @@ describe('Izanami proxy', () => {
     const config = { [clientConfigName]: featConfig }
 
     describe(feat, () => {
-      beforeEach(jest.clearAllMocks)
-
       it(`should return empty ${feat}`, async () => {
         expect.assertions(1)
         proxy = createProxy()
@@ -97,6 +97,58 @@ describe('Izanami proxy', () => {
       })
     })
   }
+
+  const configNames = {
+    won: 'experimentWonPath',
+    displayed: 'experimentDisplayedPath',
+  }
+
+  for (const experimentFeature of ['won', 'displayed']) {
+    describe(`Experiment - ${experimentFeature}`, () => {
+      const experimentClientConfig = { some: 'conf' }
+
+      it('should fail if no experiment client is configured', async () => {
+        expect.assertions(1)
+        proxy = createProxy()
+
+        const response = await callExperiment(proxy, experimentFeature)
+
+        expect(response.statusCode).toBe(500)
+      })
+
+      it(`should answer at /api/experiments/${experimentFeature} by default`, async () => {
+        expect.assertions(1)
+        proxy = createProxy({ experimentClientConfig })
+
+        const response = await callExperiment(proxy, experimentFeature)
+
+        expect(response.statusCode).toBe(200)
+      })
+
+      it('should answer at /my/experiments/won', async () => {
+        expect.assertions(1)
+        const configPath = `/my/experiments/${experimentFeature}`
+        const configName = configNames[experimentFeature]
+        proxy = createProxy({ experimentClientConfig, [configName]: configPath })
+
+        const response = await request(proxy).post(configPath)
+
+        expect(response.statusCode).toBe(200)
+      })
+
+      it('should call won from client', async () => {
+        expect.assertions(3)
+        const experiment = 'my.experiment.id'
+        proxy = createProxy({ experimentClientConfig })
+
+        const response = await callExperiment(proxy, experimentFeature, experiment)
+
+        expect(response.statusCode).toBe(200)
+        expect(response.body).toEqual({ done: true })
+        expect(izanami.experimentClient()[experimentFeature]).toHaveBeenCalledWith(experiment)
+      })
+    })
+  }
 })
 
 function createProxy(config = {}) {
@@ -112,14 +164,21 @@ function callIzanamiThrough(proxy) {
   return request(proxy).get('/api/izanami')
 }
 
+function callExperiment(proxy, feature, experiment) {
+  const query = experiment ? `?experiment=${experiment}` : ''
+  return request(proxy).post(`/api/experiments/${feature}${query}`)
+}
+
 jest.mock('izanami-node', () => {
   const features = jest.fn().mockResolvedValue('my features')
   const experiments = jest.fn().mockResolvedValue('my experiments')
   const configs = jest.fn().mockResolvedValue('my configurations')
+  const won = jest.fn().mockResolvedValue('')
+  const displayed = jest.fn().mockResolvedValue('')
 
   return {
     featureClient: jest.fn().mockImplementation(() => ({ features })),
-    experimentClient: jest.fn().mockImplementation(() => ({ experiments })),
+    experimentClient: jest.fn().mockImplementation(() => ({ experiments, won, displayed })),
     configClient: jest.fn().mockImplementation(() => ({ configs })),
   }
 })

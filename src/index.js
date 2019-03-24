@@ -6,6 +6,8 @@ function izanamiProxy(config = {}) {
     app,
     configClientConfig,
     experimentClientConfig,
+    experimentWonPath = '/api/experiments/won',
+    experimentDisplayedPath = '/api/experiments/displayed',
     featureClientConfig,
     pattern = '*',
     path = '/api/izanami',
@@ -37,6 +39,26 @@ function izanamiProxy(config = {}) {
     const [features, experiments, configurations] = await Promise.all(izanamiFeatures)
 
     ctx.body = { features, experiments, configurations }
+  }))
+
+  app.use(route.post(experimentWonPath, async ctx => {
+    if (experimentClient) {
+      experimentClient.won(ctx.query.experiment).then(() => {
+        ctx.body = { done: true }
+      })
+    } else {
+      ctx.throw('Please specify experimentClientConfig.')
+    }
+  }))
+
+  app.use(route.post(experimentDisplayedPath, async ctx => {
+    if (experimentClient) {
+      experimentClient.displayed(ctx.query.experiment).then(() => {
+        ctx.body = { done: true }
+      })
+    } else {
+      ctx.throw('Please specify experimentClientConfig.')
+    }
   }))
 }
 
