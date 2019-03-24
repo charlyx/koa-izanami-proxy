@@ -1,4 +1,3 @@
-const Koa = require('koa')
 const route = require('koa-route')
 const izanami = require('izanami-node')
 
@@ -12,13 +11,22 @@ function izanamiProxy(config = {}) {
     path = '/api/izanami',
   } = config
 
-  if (!(app instanceof Koa)) {
+  if (!app) {
     throw Error('No app given. Please specify app property in your proxy configuration')
   }
 
-  const featureClient = featureClientConfig && izanami.featureClient(featureClientConfig)
-  const experimentClient = experimentClientConfig && izanami.experimentClient(experimentClientConfig)
-  const configClient = configClientConfig && izanami.configClient(configClientConfig)
+  const featureClient = featureClientConfig && izanami.featureClient({
+    ...izanami.defaultConfig,
+    ...featureClientConfig,
+  })
+  const experimentClient = experimentClientConfig && izanami.experimentClient({
+    ...izanami.defaultConfig,
+    ...experimentClientConfig,
+  })
+  const configClient = configClientConfig && izanami.configClient({
+    ...izanami.defaultConfig,
+    ...configClientConfig,
+  })
 
   app.use(route.get(path, async ctx => {
     const izanamiFeatures = [
