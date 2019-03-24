@@ -1,5 +1,8 @@
 # koa-izanami-proxy
 
+[![Build Status](https://travis-ci.org/charlyx/koa-izanami-proxy.svg?branch=master)](https://travis-ci.org/charlyx/koa-izanami-proxy)
+[![Coverage Status](https://coveralls.io/repos/github/charlyx/koa-izanami-proxy/badge.svg?branch=master)](https://coveralls.io/github/charlyx/koa-izanami-proxy?branch=master)
+
 [Izanami](https://maif.github.io/izanami/) proxy for [Koa](https://koajs.com/)
 
 ## Install
