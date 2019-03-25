@@ -24,7 +24,9 @@ yarn add koa-izanami-proxy@alpha
 
 ## Usage
 
-A client configuration must contain a `host`, `clientId` and `clientSecret`:
+
+You must specify at least one client configuration option depending on your needs (either `featureClientConfig`, `experimentClientConfig` or `configClientConfig`).  
+One must contain a `host`, `clientId` and `clientSecret`:
 
 * `host` is your Izanami server URL
 * `clientId` and `clientSecret` are secrets you've created in Izanami keys management.
@@ -45,7 +47,10 @@ const featureClientConfig =  {
 const app = new Koa()
 
 app.use(cors())
-izanamiProxy({ app, featureClientConfig })
+
+const proxyConfiguration = { app, featureClientConfig }
+
+izanamiProxy(proxyConfiguration)
 
 app.listen(5000, () => {
   console.log('Example app listening on port 5000!')
